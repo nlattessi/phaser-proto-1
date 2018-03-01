@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Proto 1</title>
+    <script src="phaser2.min.js"></script>
+    <style type="text/css">
+        body {
+            margin: 0;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script type="text/javascript">
+
+        var game = new Phaser.Game(640, 320, Phaser.AUTO, '', {
+            preload: preload,
+            create: create,
+            update: update
+        });
+
+        function preload() {
+            game.load.image('bowman', 'bowman.png');
+            game.load.image('arrow', 'arrow.png');
+        }
+
+        var player;
+        var cursors;
+        var canMove = true;
+        var shootBtn;
+        var arrows;
+
+        function create() {
+            player = game.add.sprite(32, 32, 'bowman');
+            cursors = game.input.keyboard.createCursorKeys();
+
+            cursors.down.onDown.add(moveDown, this);
+            cursors.up.onDown.add(moveUp, this);
+            cursors.up.onDown.add(moveUp, this);
+
+            shootBtn = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+            shootBtn.onDown.add(shoot, this);
+
+            arrows = game.add.group();
+            arrows.enableBody = true;
+	// We're going to set the body type to the ARCADE physics, since we don't need any advanced physics
+arrows.physicsBodyType = Phaser.Physics.ARCADE;
+            arrows.createMultiple(20, 'arrow');
+            arrows.callAll('events.onOutOfBounds.add', 'events.onOutOfBounds', resetArrow);
+            arrows.callAll('anchor.setTo', 'anchor', 0.5, 1.0);
+            arrows.setAll('checkWorldBounds', true);
+        }
+
+        function resetArrow(arrow) {
+	arrow.kill();
+}
+
+        function moveDown() {
+            if (!canMove) {
+                return;
+            }
+
+            if (player.y + (1 * 32) >= 288) {
+                return;
+            }
+
+            canMove = false;
+
+            game.add.tween(player).to({
+                y: player.y + (1 * 32)
+            }, 100, Phaser.Easing.Linear.None, true).onComplete.add(function() {
+                canMove = true;
+            }, this);
+
+            // var playerTween = this.tweens.add({
+            //         targets: player,
+            //         y: player.y + (1 * 32),
+            //         duration: 100,
+            //         onComplete: function(tween, target, allowedToMove) {
+            //             allowedToMove = true
+            //             console.log("tween complete")
+            //         },
+            //         onCompleteParams: [this.allowedToMove]
+            //     });
+        }
+
+        function moveUp() {
+            if (!canMove) {
+                return;
+            }
+
+            if (player.y - (1 * 32) <= 0) {
+                return;
+            }
+
+            canMove = false;
+
+            game.add.tween(player).to({
+                y: player.y - (1 * 32)
+            }, 100, Phaser.Easing.Linear.None, true).onComplete.add(function() {
+                canMove = true;
+            }, this);
+        }
+
+        function shoot() {
+	// Get the first laser that's inactive, by passing 'false' as a parameter
+	var arrow = arrows.getFirstExists(false);
+	if (arrow) {
+		// If we have a arrow, set it to the starting position
+		arrow.reset(player.x + 40, player.y + 20);
+		// Give it a velocity of -500 so it starts shooting
+		arrow.body.velocity.x = 500;
+	}
+
+}
+
+        function update() {
+            //console.log(arrows.countDead());
+            //console.log(arrows.countLiving());
+            // if (cursors.down.isDown) {
+            //     console.log("moveDown");
+            // }
+        }
+
+    // var config = {
+    //     type: Phaser.AUTO,
+    //     width: 640,
+    //     height: 320,
+    //     scene: {
+    //         preload: preload,
+    //         create: create,
+    //         update: update
+    //     }
+    // }
+
+    // var game = new Phaser.Game(config)
+    // var cursors
+    // var player
+
+
+    // function preload ()
+    // {
+    //     this.load.image('bowman', 'bowman.png')
+    //     this.load.image('star', 'star.png')
+    // }
+
+    // function create ()
+    // {
+    //     //this.add.image(400, 300, 'bowman')
+    //     //this.add.image(200, 150, 'star')
+
+    //     cursors = this.input.keyboard.createCursorKeys();
+
+    //     player = this.add.sprite(32, 32, 'bowman')
+    //     //player.anchor.set(0.5, 0.5)
+
+
+
+    //     //cursors.down.onDown.add(moveDown, this);
+    //     //cursors.up.onDown.add(moveUp, this);
+    // }
+
+    // function moveDown() {
+    //     console.log("modeDown");
+    // }
+
+    // function moveUp() {
+    //     console.log("modeUp");
+    // }
+
+    // function update ()
+    // {
+    //     if (Phaser.Input.Keyboard.JustDown(cursors.down)) {
+    //         console.log("moveDown");
+    //     }
+
+
+    //     var isDownButton = false
+    //     var allowedToMove = true
+    //     //console.log("allowed to move: " + allowedToMove);
+    //     //console.log("player.y " + player.y);
+    //     //console.log(player.x)
+    //     //console.log(player.y)
+    //     // if (cursors.left.isDown && !isDownButton) {
+    //     //     player.x = player.x - 32
+    //     //     isDownButton = true
+    //     // }
+    //     // else if (cursors.right.isDown) {
+    //     //     player.x += 32
+    //     // }
+    //     // else
+    //     // {
+    //     //     isDownButton = false
+    //     // }
+
+    //     // if (cursors.down.isDown) {
+    //     //     if (!allowedToMove) {
+    //     //         return;
+    //     //     }
+    //     //     if (allowedToMove) {
+    //     //         if (player.y + (1*32) >= 320) {
+    //     //             return;
+    //     //         }
+    //     //     }
+
+    //     //     console.log("allowed  to move")
+
+    //     //     allowedToMove = false;
+
+    //     //     var playerTween = this.tweens.add({
+    //     //         targets: player,
+    //     //         y: player.y + (1 * 32),
+    //     //         duration: 100,
+    //     //         onComplete: function(tween, target, allowedToMove) {
+    //     //             allowedToMove = true
+    //     //             console.log("tween complete")
+    //     //         },
+    //     //         onCompleteParams: [this.allowedToMove]
+    //     //     });
+    //     // }
+    //     // else if (Phaser.Input.Keyboard.JustDown(cursors.up)) {
+    //     //     if (allowedToMove) {
+    //     //         if (player.y - (1*32) <= 0) {
+    //     //             return;
+    //     //         }
+    //     //     }
+
+    //     //     allowedToMove = false;
+
+    //     //     var playerTween = this.tweens.add({
+    //     //         targets: player,
+    //     //         y: player.y - (1*32),
+    //     //         duration: 100,
+    //     //         onComplete: function(tween, target, allowedToMove) {
+    //     //             allowedToMove = true
+    //     //         },
+    //     //         onCompleteParams: [this.allowedToMove]
+    //     //         });
+    //     //     }
+        // }
+
+    </script>
+
+</body>
+
+</html>
