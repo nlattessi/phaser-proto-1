@@ -9,6 +9,8 @@ function preload() {
   game.load.image("bowman", "bowman.png");
   game.load.image("arrow", "arrow.png");
   game.load.image("skeleton", "skeleton.png");
+  game.load.image("floor", "floor.png");
+  game.load.image("blue_dragon", "blue_dragon.png");
 }
 
 var player;
@@ -19,6 +21,10 @@ var shootKey;
 var skeletons;
 var nextSkeleton = 0;
 var skeletonRate = 1600;
+
+var blueDragon;
+
+var floors;
 
 var weapons = [];
 var currentWeapon = 0;
@@ -93,6 +99,11 @@ function playerSkeletonsCollisionHandler(player, skeleton) {
   displayEnd();
 }
 
+function skeletonsFloorsCollisionHandler(skeleton, floor) {
+  skeleton.kill();
+  floor.kill();
+}
+
 function displayEnd() {
   // you can't win and lose at the same time
   if (endText && endText.exists) {
@@ -128,6 +139,15 @@ function create() {
   shootKey = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   shootKey.onDown.add(shoot, this);
 
+  floors = game.add.group();
+  floors.enableBody = true;
+  floors.physicsBodyType = Phaser.Physics.ARCADE;
+  for (var i = 1; i < 9; i++) {
+    var floor = game.add.sprite(64, (i * 32), "floor");
+    floor.anchor.set(0.5);
+    floors.add(floor);
+  }
+
   player = game.add.sprite(32, 32, "bowman");
   player.anchor.set(0.5);
   game.physics.enable(player, Phaser.Physics.ARCADE);
@@ -138,6 +158,13 @@ function create() {
   for (var i = 0; i < 20; i++) {
     skeletons.add(new Skeleton(game, "skeleton"), true);
   }
+
+  blueDragon = game.add.sprite(1000, 160, "blue_dragon");
+  blueDragon.anchor.set(0.5);
+  blueDragon.scale.x = -1;
+  game.physics.enable(blueDragon, Phaser.Physics.ARCADE);
+  blueDragon.body.velocity.x = -100;
+
 
   weapons.push(new Weapon.SingleArrow(game));
   currentWeapon = 0;
@@ -154,6 +181,14 @@ function update() {
   }
 
   game.physics.arcade.overlap(
+    skeletons,
+    floors,
+    skeletonsFloorsCollisionHandler,
+    null,
+    this
+  );
+
+  game.physics.arcade.overlap(
     weapons[currentWeapon],
     skeletons,
     currentWeaponSkeletonCollisionHandler,
@@ -168,6 +203,8 @@ function update() {
     null,
     this
   );
+
+
 
   if (game.input.keyboard.isDown(Phaser.Keyboard.Z)) {
     if (returnText && returnText.exists) {
