@@ -24,10 +24,14 @@ export default class extends Phaser.State {
     this.game.load.image('up_arrow_key', 'assets/images/up_arrow_key.png')
     this.game.load.image('down_arrow_key', 'assets/images/down_arrow_key.png')
     this.game.load.image('right_arrow_key', 'assets/images/right_arrow_key.png')
+    this.game.load.image('arrow_2', 'assets/images/arrow_2.png')
+    this.game.load.image('blue_dragon', 'assets/images/blue_dragon.png')
+    this.game.load.image('blue_magic_2', 'assets/images/blue_magic_2.png')
+    this.game.load.image('blue_magic', 'assets/images/blue_magic.png')
   }
 
   create () {
     // this.state.start('Tutorial')
-    this.state.start('Level1')
+    this.state.start('Level3')
   }
 }

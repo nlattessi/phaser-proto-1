@@ -2,27 +2,34 @@ import config from '../config'
 
 const TILE_SIZE = config.tileSize
 
-class Orc extends Phaser.Sprite {
-  constructor(game, initX, finalX, initY, finalY, daggers) {
-    super(game, initX * TILE_SIZE, initY * TILE_SIZE, 'orc_1')
+class BlueDragon extends Phaser.Sprite {
+  constructor(game, initX, finalX, initY, finalY, player, blueArrows) {
+    super(game, initX * TILE_SIZE, initY * TILE_SIZE, 'blue_dragon')
     this.game.physics.arcade.enable(this)
     this.nextAction = 1000
     this.nextActionRate = 750
     this.canMove = false
 
+
+    const speed = this.game.rnd.integerInRange(500, 2000)
+
     this.game.add.tween(this)
-      .to({x: finalX * TILE_SIZE}, 1000, Phaser.Easing.Linear.None, true)
+      .to({y: finalY * TILE_SIZE}, speed, Phaser.Easing.Linear.None, true)
       .onComplete.add(() => this.canMove = true)
 
     this.initY = initY
     this.finalY = finalY
 
-    this.daggers = daggers
+    this.lives = 10
 
-    this.lives = 3
-
-    // this.body.immovable = true
     this.takingDagame = false
+
+    this.player = player
+
+    this.blueArrows = blueArrows
+
+    this.fireRate = 750
+    this.nextFire = 0
   }
 
   update() {
@@ -42,67 +49,57 @@ class Orc extends Phaser.Sprite {
       return
     }
 
+    this.attack()
+
     if (this.game.time.time > this.nextAction) {
-      this.canMove = false
-
-      const action = this.game.rnd.integerInRange(0, 4)
-
-      if (action === 0) {
-        this.moveUp()
-      } else if (action === 1) {
-        this.attack()
-        this.canMove = true
-        this.nextAction = this.game.time.time + this.nextActionRate
-      } else if (action === 2) {
-        this.moveDown()
-      } else {
-        this.canMove = true
-        this.nextAction = this.game.time.time + this.nextActionRate
-      }
+    //   this.canMove = false
 
     //   const action = this.game.rnd.integerInRange(0, 4)
 
-    //   // if (action === 0) {
-    //   //   const dagger = this.game.add.sprite(this.x - 20, this.y + 24, 'dagger')
-    //   //   dagger.angle = 270
-    //   //   this.game.physics.arcade.enable(dagger)
-    //   //   dagger.body.velocity.x = -250
-    //   //   this.orcCanMove = true
-    //   // }
-
-    //   if (action === 1) {
-    //     const movY = this.y + (config.tileSize)
-    //     if (!(movY > this.finalY)) {
-    //       this.game.add.tween(this).to({
-    //         y: movY
-    //       }, 100, Phaser.Easing.Linear.None, true).onComplete.add(() => {
-    //         this.canMove = true
-    //         this.nextAction = this.game.time.time + this.nextActionRate
-    //       })
-    //     }
-    //   }
-
-    //   if (action === 2) {
-    //     const movY = this.y - (config.tileSize)
-    //     if (!(movY < this.initY)) {
-    //       this.game.add.tween(this).to({
-    //         y: movY
-    //       }, 100, Phaser.Easing.Linear.None, true).onComplete.add(() => {
-    //         this.canMove = true
-    //         this.nextAction = this.game.time.time + this.nextActionRate
-    //       })
-    //     }
-    //   }
-
-    //   if (action === 3) {
+    //   if (action === 0) {
+    //     this.moveUp()
+    //   } else if (action === 1) {
+    //     this.attack()
+    //     this.canMove = true
+    //     this.nextAction = this.game.time.time + this.nextActionRate
+    //   } else if (action === 2) {
+    //     this.moveDown()
+    //   } else {
     //     this.canMove = true
     //     this.nextAction = this.game.time.time + this.nextActionRate
     //   }
     }
+
+    if (this.game.input.keyboard.isDown(Phaser.Keyboard.F)) {
+        this.attack()
+    }
+
   }
 
   attack() {
-    this.daggers.fire(this, null, null, 0, 16)
+    if (this.game.time.now > this.nextFire && this.blueArrows.countDead() > 0)
+    {
+        this.nextFire = this.game.time.now + this.fireRate
+
+        const blueArrow = this.blueArrows.getFirstDead()
+
+        blueArrow.reset(this.x - 8, this.y - 8)
+
+        this.game.physics.arcade.moveToObject(blueArrow, this.player, 200)
+    }
+    // this.blueArrows.fire(this, null, null, 0, 16)
+    // this.blueArrows2.fire(this, null, null, 0, 32)
+
+    // if (this.blueArrows1.countDead() > 0)
+    // {
+
+        // var bullet = this.blueArrows1.getFirstDead();
+
+        // bullet.reset(this.x - 8, this.y - 8);
+
+
+        // this.game.physics.arcade.moveToObject(bullet, this.player, 300);
+    // }
   }
 
   damage() {
@@ -247,4 +244,4 @@ class Orc extends Phaser.Sprite {
   }
 }
 
-export default Orc
+export default BlueDragon
