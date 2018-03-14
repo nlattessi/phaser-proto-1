@@ -8,7 +8,7 @@ export default class extends Phaser.State {
             fontSize: "24px",
             fill: "#fff"
           })
-          this.game.add.text(32, 2 * config.tileSize, "kill enemies until 0 to win current level", {
+          this.game.add.text(32, 2 * config.tileSize, "kill enemies until reach objective to win current level", {
             fontSize: "24px",
             fill: "#fff"
           })
@@ -22,17 +22,17 @@ export default class extends Phaser.State {
         this.game.add.sprite(12 * config.tileSize, 4 * config.tileSize, 'right_arrow_key')
         this.game.add.text(13 * config.tileSize, 4 * config.tileSize,    "Shoot", {fontSize: "24px", fill: "#fff"})
 
-        this.game.add.text(1 * config.tileSize, 6 * config.tileSize, "Use kegs as one-time defense!", {
+        this.game.add.text(1 * config.tileSize, 6 * config.tileSize, "Use kegs as one-time defense against skeletons!", {
             fontSize: "24px",
             fill: "#fff"
           })
 
-        this.game.add.text(1 * config.tileSize, 8 * config.tileSize, "Don't let enemies touch you!", {
+        this.game.add.text(1 * config.tileSize, 8 * config.tileSize, "Don't let enemies touch you or shoot you!", {
             fontSize: "24px",
             fill: "#fff"
           })
 
-          this.game.add.text(1 * config.tileSize, 10 * config.tileSize, "Don't let any enemy pass!", {
+          this.game.add.text(1 * config.tileSize, 10 * config.tileSize, "Don't let any skeleton pass!", {
             fontSize: "24px",
             fill: "#fff"
           })
@@ -45,7 +45,7 @@ export default class extends Phaser.State {
 
     update() {
         if (this.game.input.keyboard.isDown(Phaser.Keyboard.ENTER)) {
-            this.state.start('Game')
+            this.state.start('Level1')
         }
     }
 }

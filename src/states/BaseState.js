@@ -180,7 +180,9 @@ export default class extends Phaser.State {
     }
 
     if (!this.isLevelStarted) {
-      if (this.setupBlueDragons) {
+      if (this.useSkeletons) {
+        this.isLevelStarted = true
+      } else if (this.useBlueDragons) {
         this.blueDragons.forEachAlive(element => {
           this.isLevelStarted = element.canMove
         }, this, true);
@@ -239,7 +241,7 @@ export default class extends Phaser.State {
     if (!this.gameOver) {
       this.game.physics.arcade.overlap(this.weapon.bullets, this.skeletons, this.arrowVsSkeleton, null, this)
       this.game.physics.arcade.overlap(this.weapon.bullets, this.orcs, this.arrowVsOrc, null, this)
-      this.game.physics.arcade.overlap(this.weapon.bullets, this.blueDragon1, this.arrowVsBlueDragons, null, this)
+      this.game.physics.arcade.overlap(this.weapon.bullets, this.blueDragons, this.arrowVsBlueDragons, null, this)
       this.game.physics.arcade.collide(this.player, this.skeletons, this.playerVsSkeleton, null, this)
       this.game.physics.arcade.collide(this.skeletons, this.objectLayer, this.skeletonVsObjects, null, this)
       this.game.physics.arcade.overlap(this.daggers.bullets, this.player, this.daggerVsPlayer, null, this)
@@ -250,17 +252,11 @@ export default class extends Phaser.State {
       }
     }
 
-    if (this.game.input.keyboard.isDown(Phaser.Keyboard.Z)) {
-      if (this.returnText && this.returnText.exists) {
-        this.resetGame();
-      }
-    }
-
     if (this.showReturn && this.game.time.now > this.showReturn) {
       this.returnText = this.game.add.text(
       this.game.width / 2,
       this.game.height / 2 + 20,
-      "Press Z or Tap Game to go back to Main Menu",
+      "Press SPACE to restart level",
       { font: "16px sans-serif", fill: "#fff" }
       );
       this.returnText.anchor.setTo(0.5, 0.5);
@@ -268,7 +264,9 @@ export default class extends Phaser.State {
     }
 
     if (this.game.input.keyboard.isDown(Phaser.Keyboard.SPACEBAR)) {
-      if (this.nextLevelText && this.nextLevelText.exists) {
+      if (this.returnText && this.returnText.exists) {
+        this.resetGame();
+      } else if (this.nextLevelText && this.nextLevelText.exists) {
         this.goToNextLevel()
       }
     }
@@ -344,9 +342,15 @@ export default class extends Phaser.State {
     this.score += 1
     this.scoreText.text = "x " + this.score
 
+    this.scoreIncreased()
+
     if (this.score === this.objective) {
       this.nextLevel()
     }
+  }
+
+  scoreIncreased() {
+
   }
 
   arrowVsOrc(arrow, orc) {
@@ -364,7 +368,7 @@ export default class extends Phaser.State {
     }
   }
 
-  arrowVsBlueDragons(blueDragon, arrow) {
+  arrowVsBlueDragons(arrow, blueDragon) {
     arrow.kill()
 
     blueDragon.damage()

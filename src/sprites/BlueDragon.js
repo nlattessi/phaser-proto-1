@@ -28,7 +28,7 @@ class BlueDragon extends Phaser.Sprite {
 
     this.blueArrows = blueArrows
 
-    this.fireRate = 750
+    this.fireRate = 900
     this.nextFire = 0
   }
 
@@ -70,9 +70,9 @@ class BlueDragon extends Phaser.Sprite {
     //   }
     }
 
-    if (this.game.input.keyboard.isDown(Phaser.Keyboard.F)) {
-        this.attack()
-    }
+    // if (this.game.input.keyboard.isDown(Phaser.Keyboard.F)) {
+    //     this.attack()
+    // }
 
   }
 
@@ -85,7 +85,7 @@ class BlueDragon extends Phaser.Sprite {
 
         blueArrow.reset(this.x - 8, this.y - 8)
 
-        this.game.physics.arcade.moveToObject(blueArrow, this.player, 200)
+        this.game.physics.arcade.moveToObject(blueArrow, this.player, 250)
     }
     // this.blueArrows.fire(this, null, null, 0, 16)
     // this.blueArrows2.fire(this, null, null, 0, 32)
@@ -112,7 +112,7 @@ class BlueDragon extends Phaser.Sprite {
     if (this.lives === 0) {
       this.kill()
     } else {
-      this.attack()
+    //   this.attack()
 
       this.takingDagame = true
       const bkpTint = this.tint
@@ -143,7 +143,7 @@ class BlueDragon extends Phaser.Sprite {
 
       // we're using this line for the example to run indefinitely
       quake.onComplete.addOnce(() => {
-        this.attack()
+        // this.attack()
         this.tint = bkpTint
         this.takingDagame = false
       });
